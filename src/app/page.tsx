@@ -1,8 +1,16 @@
 import Link from 'next/link';
-import { Prompt } from '@/types';
+import { Prompt, DiscoveryFilters } from '@/types';
 
-async function getPrompts(): Promise<Prompt[]> {
-  // In production, fetch from your database
+/**
+ * Browse prompts with optional filtering and discovery.
+ * In production, query from your database with pagination.
+ */
+async function getPrompts(filters?: DiscoveryFilters): Promise<Prompt[]> {
+  // In production, implement database queries with proper pagination:
+  // const limit = filters?.limit ?? 12;
+  // const offset = ((filters?.page ?? 1) - 1) * limit;
+  // return db.prompts.findMany({ where: buildWhere(filters), skip: offset, take: limit });
+
   return [
     {
       id: 'prompt-001',

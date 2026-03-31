@@ -1,14 +1,23 @@
 import { VendorDashboardData } from '@/types';
 
-async function getVendorData(): Promise<VendorDashboardData> {
+/**
+ * Fetch vendor dashboard data including earnings, sales history, and prompts.
+ * In production, query from database with vendor authentication.
+ */
+async function getVendorData(vendorId: string = 'vendor-001'): Promise<VendorDashboardData> {
+  // In production: const vendor = await db.vendors.findByIdOrThrow(vendorId, { requireAuth: true });
   return {
     vendor: {
-      id: 'vendor-001',
+      id: vendorId,
       name: 'CodeCraft AI',
-      walletAddress: '0xabc...def',
+      email: 'team@codecraft.ai',
+      description: 'Premium AI prompts for developers and engineers',
       totalRevenue: 34158,
       promptCount: 8,
+      totalSales: 342,
+      averageRating: 4.75,
       joinedAt: '2024-01-01T00:00:00Z',
+      verified: true,
     },
     prompts: [
       {
@@ -34,6 +43,7 @@ async function getVendorData(): Promise<VendorDashboardData> {
         amount: 999,
         buyerId: 'buyer-xyz',
         createdAt: '2024-03-15T10:23:00Z',
+        status: 'completed',
       },
       {
         id: 'sale-002',
@@ -42,8 +52,15 @@ async function getVendorData(): Promise<VendorDashboardData> {
         amount: 999,
         buyerId: 'buyer-abc',
         createdAt: '2024-03-15T09:15:00Z',
+        status: 'completed',
       },
     ],
+    earnings: {
+      totalEarnings: 34158,
+      thisMonth: 8940,
+      thisWeek: 2997,
+      pendingBalance: 1500,
+    },
   };
 }
 
@@ -60,22 +77,54 @@ export default async function DashboardPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-6 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        {/* Earnings Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="text-sm text-gray-500 mb-1">Total Revenue</div>
+            <div className="text-sm text-gray-500 mb-1">Total Earnings</div>
             <div className="text-3xl font-bold text-gray-900">
-              ${(data.vendor.totalRevenue / 100).toFixed(2)}
+              ${(data.earnings.totalEarnings / 100).toFixed(2)}
             </div>
+            <p className="text-xs text-gray-400 mt-2">All-time revenue</p>
           </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="text-sm text-gray-500 mb-1">This Month</div>
+            <div className="text-3xl font-bold text-green-600">
+              ${(data.earnings.thisMonth / 100).toFixed(2)}
+            </div>
+            <p className="text-xs text-gray-400 mt-2">30-day total</p>
+          </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="text-sm text-gray-500 mb-1">This Week</div>
+            <div className="text-3xl font-bold text-blue-600">
+              ${(data.earnings.thisWeek / 100).toFixed(2)}
+            </div>
+            <p className="text-xs text-gray-400 mt-2">7-day total</p>
+          </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="text-sm text-gray-500 mb-1">Pending Balance</div>
+            <div className="text-3xl font-bold text-orange-600">
+              ${(data.earnings.pendingBalance / 100).toFixed(2)}
+            </div>
+            <p className="text-xs text-gray-400 mt-2">Ready to withdraw</p>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="text-sm text-gray-500 mb-1">Prompts Listed</div>
             <div className="text-3xl font-bold text-gray-900">{data.vendor.promptCount}</div>
+            <p className="text-xs text-gray-400 mt-2">Active listings</p>
           </div>
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="text-sm text-gray-500 mb-1">Total Sales</div>
-            <div className="text-3xl font-bold text-gray-900">
-              {data.prompts.reduce((sum, p) => sum + p.salesCount, 0)}
-            </div>
+            <div className="text-3xl font-bold text-gray-900">{data.vendor.totalSales}</div>
+            <p className="text-xs text-gray-400 mt-2">All-time purchases</p>
+          </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="text-sm text-gray-500 mb-1">Average Rating</div>
+            <div className="text-3xl font-bold text-gray-900">★ {data.vendor.averageRating}</div>
+            <p className="text-xs text-gray-400 mt-2">From customer reviews</p>
           </div>
         </div>
 
